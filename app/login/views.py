@@ -1,13 +1,9 @@
 from django.shortcuts import render
 from .forms import Formulario
-
 from django.contrib.auth import authenticate, login,logout
 from django.contrib import messages
-
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-
-
 
 def loginPage(request):
     if request.method == 'POST':
