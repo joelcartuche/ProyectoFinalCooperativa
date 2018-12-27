@@ -3,9 +3,9 @@ from app.modelo.models import Cliente,Banco,Cuenta,Transaccion
 
 class AdminCliente(admin.ModelAdmin):
 
-    list_display = ["cedula", "nombres", "apellidos", "genero", "estadoCivil", "fechaNacimiento", "correo", "telefono", "celular", "direccion"]
+    list_display = ["estado","cedula", "nombres", "apellidos", "genero", "estadoCivil", "fechaNacimiento", "correo", "telefono", "celular", "direccion"]
     list_editable = ["apellidos", "nombres", "genero"]
-    list_filter = ["genero", "direccion", "fechaNacimiento", "estadoCivil"]
+    list_filter = ["estado","genero", "direccion", "fechaNacimiento", "estadoCivil"]
     search_fields = ["cedula", "nombres", "apellidos"]
 
     class Meta:
@@ -26,8 +26,8 @@ admin.site.register(Banco, AdminBanco)
 
 class AdminCuenta(admin.ModelAdmin):
 
-    list_display = ["numero", "estado", "fechaApertura", "saldo", "tipoCuenta", "cliente"]
-    list_filter = ["fechaApertura", "estado", "tipoCuenta"]
+    list_display = ["numero", "fechaApertura", "saldo", "tipoCuenta", "cliente"]
+    list_filter = ["fechaApertura", "tipoCuenta"]
     search_fields = ["numero", "cliente"]
 
     class Meta:

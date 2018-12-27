@@ -16,6 +16,7 @@ class Cliente(models.Model):
     )
 
     cliente_id = models.AutoField(primary_key=True)
+    estado = models.BooleanField(null = False, default = True)
     cedula = models.CharField(unique=True, max_length=10, null = False)
     nombres = models.CharField(max_length=70, null = False)
     apellidos = models.CharField(max_length=70, null = False)
@@ -51,13 +52,12 @@ class Cuenta(models.Model):
     )
     cuenta_id = models.AutoField(primary_key=True)
     numero = models.CharField(max_length=20, unique=True, null = False)
-    estado = models.BooleanField(null = False, default = True)
     fechaApertura = models.DateField(auto_now_add = True, null = False)
     saldo = models.DecimalField(max_digits=10, decimal_places=3, null = False)
     tipoCuenta = models.CharField(max_length=30, choices = listaTipo, null = False)
     cliente = models.ForeignKey(
         'Cliente',
-        on_delete=models.CASCADE,
+        on_delete = models.CASCADE,
     )
 
 class Transaccion(models.Model):
