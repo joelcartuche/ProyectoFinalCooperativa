@@ -78,6 +78,7 @@ def modificar(request,pk):
                 client.nombres = datos.get('nombres')
                 client.apellidos= datos.get('apellidos')
                 client.genero = datos.get('genero')
+                client.estado = datos.get('estado')
                 client.estadoCivil =datos.get('estadoCivil')
                 client.fechaNacimiento = datos.get('fechaNacimiento')
                 client.telefono=datos.get('telefono')
@@ -96,8 +97,19 @@ def modificar(request,pk):
 @login_required
 def eliminar(request,pk):
     client = Cliente.objects.get(cedula = pk)
-    if client:
+    if request.method == 'POST':
             client.estado = False
             client.save()
-            return redirect('principal')
-    return render (request,'eliminar_cliente.html')
+            return redirect('gestion')
+    else:
+            return render (request,'clientes/confirmar.html')
+
+
+@login_required
+def activar(request,pk):
+    client = Cliente.objects.get(cedula = pk)
+    if client:
+            client.estado = True
+            client.save()
+            return redirect('gestion')
+

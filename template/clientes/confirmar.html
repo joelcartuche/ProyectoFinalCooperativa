@@ -1,0 +1,23 @@
+{% extends "../principal/principal.html" %}
+
+
+{% block data %}
+<div class="row mt">
+    <div class="col-md-12">
+        <div class="showback">
+            <h4><i class="fa fa-angle-right"></i> Confirmar</h4>
+
+            <div class="alert alert-warning"><b>Precaución!</b>¿Desea eliminar el cliente?</div>
+            <form method="POST">
+
+                    <button type="submit" class="btn btn-round btn-success btn-lg ">Aceptar</button>
+                    <a href="{%url 'gestion'%}" class="btn btn-round btn-danger btn-lg     ">Cancelar</a>
+                    {% csrf_token %}
+
+            </form>
+            
+
+        </div>
+    </div>
+</div>
+{%endblock%}

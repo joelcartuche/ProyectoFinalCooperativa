@@ -8,4 +8,6 @@ urlpatterns = [
     path('crear/',views.crear_cliente,name='crear'),
     path(r'^modificar/(?P<pk>\d+)/$',views.modificar,name='modificar'),
     path(r'^eliminar/(?P<pk>\d+)/$',views.eliminar,name='eliminar'),
+    path(r'^activar/(?P<pk>\d+)/$',views.activar,name='activar'),
+    
 ]
