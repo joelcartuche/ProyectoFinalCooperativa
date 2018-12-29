@@ -9,5 +9,13 @@ urlpatterns = [
     path(r'^modificar/(?P<pk>\d+)/$',views.modificar,name='modificar'),
     path(r'^eliminar/(?P<pk>\d+)/$',views.eliminar,name='eliminar'),
     path(r'^activar/(?P<pk>\d+)/$',views.activar,name='activar'),
+    path('listadepositoBuscar',views.listarClienteCuentaBusqueda,name='listaDepositoBuscar'),
+    path('transferencia/',views.transferenciaLista,name='transferenciaLista'),
+    path('listaClienteCuenta/',views.listarClienteCuenta,name='listaClienteCuenta'),
+    path('confirmarContra',views.confirmarContrasena,name='confirmarContra'),
+    path(r'^montoDeposito/(?P<cedula>\d+)(?P<numero>\d+)/$',views.depositar,name='montoDeposito'),
+    path('transferir/',views.transferencia,name='transferencia'),
+    path('buscarTransferenciaOrigen/',views.buscarTransferenciaOrigen,name='buscarTransferenciaOrigen'),
+    
     
 ]

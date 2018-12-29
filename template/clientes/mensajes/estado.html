@@ -1,0 +1,32 @@
+{% extends "../../principal/principal.html" %}
+
+
+{% block data %}
+
+<h3><i class="fa fa-angle-right"></i> {{titulo}}</h3>
+<div class="row mt">
+    <div class="col-md-12">
+        <div class="content-panel">
+            <h4><i class="fa fa-angle-right"></i> {{subtitulo}}</h4>
+            <hr>
+
+
+            <!--  BUTTONS SIZES -->
+            <div class="showback">
+
+                {%if valor == True%}
+                <div class="alert alert-success"><b>{{mensaje}}</b> </div>
+                {%else%}
+                <div class="alert alert-danger"><b>{{mensaje}}!</b> </div>
+                {%endif%}
+                
+
+            </div>
+            <!-- /showback -->
+        </div>
+        <!-- /content-panel -->
+    </div>
+</div>
+
+
+{%endblock%}

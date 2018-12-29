@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'app.servicio_web',
     'rest_framework',
 ]
-
+#joelcartuche
+#joel2011
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

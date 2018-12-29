@@ -53,12 +53,16 @@ class Cuenta(models.Model):
     cuenta_id = models.AutoField(primary_key=True)
     numero = models.CharField(max_length=20, unique=True, null = False)
     fechaApertura = models.DateField(auto_now_add = True, null = False)
-    saldo = models.DecimalField(max_digits=10, decimal_places=3, null = False)
+    saldo = models.DecimalField(max_digits=10, decimal_places=3, null = False,editable=True)
     tipoCuenta = models.CharField(max_length=30, choices = listaTipo, null = False)
     cliente = models.ForeignKey(
         'Cliente',
         on_delete = models.CASCADE,
     )
+    def __str__(self):
+        string=str(self.saldo)+";"+str(self.cuenta_id)
+        return string
+
 
 class Transaccion(models.Model):
 
