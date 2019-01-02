@@ -19,7 +19,32 @@
                 {%else%}
                 <div class="alert alert-danger"><b>{{mensaje}}!</b> </div>
                 {%endif%}
-                
+                <button type="button" class="btn btn-primary" onclick=generarReporte()>
+                    Generar reporte PDF
+                </button>
+                <script type="text/javascript">
+                //datos enviados desde url
+                    var valor = "{{monto}}"
+                    var tipo = "{{subtitulo}}"
+                    var numeroCuenta1="{{numero1}}"
+                    var numeroCuenta2="{{numero2}}"
+                    var cedulaCuenta1="{{cedula1}}"
+                    var cedulaCuenta2="{{cedula2}}"
+                    
+
+                    function generarReporte(){
+
+                        if (numeroCuenta1 && cedulaCuenta1 && numeroCuenta2=='' &&cedulaCuenta2==''){
+                            var url = '{% url "comprobante" %}'+'?numero1='+numeroCuenta1+'&&cedula1='+cedulaCuenta1+'&&numero2=""&&cedula2=""'+'&&valor='+valor+'&&tipo='+tipo
+                            window.open(url, "reporte")
+                        }else{
+                            var url = '{% url "comprobante" %}'+'?numero1='+numeroCuenta1+'&&cedula1='+cedulaCuenta1+'&&numero2='+numeroCuenta2+'&&cedula2='+cedulaCuenta2+'&&valor='+valor+'&&tipo='+tipo
+                            window.open(url, "reporte")
+                        }
+                        
+
+                    }
+                </script>
 
             </div>
             <!-- /showback -->

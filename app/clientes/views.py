@@ -3,6 +3,18 @@ from django.contrib.auth.decorators import login_required
 from .forms import FormularioCliente,FormularioCuenta,FormularioMonto,FormularioTransaccion
 from app.modelo.models import Cliente,Cuenta,Transaccion
 from django.http import HttpResponse
+#importamos para generar pdf
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+
+import csv
+
+from weasyprint import HTML, CSS
+from django.template.loader import get_template,render_to_string
+from django.http import HttpResponse
+from weasyprint.fonts import FontConfiguration
+
 
 # Create your views here.
 
@@ -149,7 +161,7 @@ def confirmarContrasena(request):
 @login_required
 def depositar(request,cedula,numero):
         formulario = FormularioMonto(request.POST)
-        formularioTransaccion= FormularioTransaccion(request.POST)
+        formularioTransaccion= FormularioTransaccion(request.POST)       
         cliente=Cliente.objects.all().filter(cedula = cedula)
         cuenta = Cuenta.objects.all().filter(numero = numero)
         if request.method == 'POST':
@@ -166,18 +178,38 @@ def depositar(request,cedula,numero):
                         transaccion.descripcion = datosTransaccion.get('descripcion')
                         transaccion.responsable = datosTransaccion.get('responsable')
                         transaccion.cuenta = Cuenta.objects.get(cuenta_id=int(aux[1]))
+                        
+
                         if datosTransaccion.get('tipo') =='deposito':
                                 transaccion.save()
                                 for cu in cuenta:
                                         cu.saldo =round(saldoActual+deposito,3)
                                         cu.save()
-                                return redirect('listaClienteCuenta')
+                                #datos a recogerse en el template
+                                titulo='Transacción'
+                                subtitulo='Depósito'
+                                mensaje='Deposito realizado con éxito'
+                                valor=True
+                                numero1 = numero
+                                cedula1 = cedula
+                                monto = datosTransaccion.get('valor')
+
+                                return render (request,'clientes/mensajes/estado.html',locals())
                         if datosTransaccion.get('tipo') =='retiro':
                                 transaccion.save()
                                 for cu in cuenta:
                                         cu.saldo =round(saldoActual-deposito,3)
                                         cu.save()
-                                return redirect('listaClienteCuenta')
+                                #datos a recogerse en el template
+                                titulo='Transacción'
+                                subtitulo='Retiro'
+                                mensaje='Retirorealizado con éxito'
+                                valor=True
+                                numero1 = numero
+                                cedula1 = cedula
+                                monto = datosTransaccion.get('valor')         
+                                return render (request,'clientes/mensajes/estado.html',locals())
+
         else:
                 return render (request,'clientes/transacciones/monto_deposito.html',locals())
 
@@ -187,9 +219,7 @@ def depositar(request,cedula,numero):
 
 @login_required
 def transferenciaLista(request):
-        lista= Cliente.objects.all().filter().values('cedula','nombres','apellidos','correo','cuenta__numero',
-        'cuenta__saldo','cuenta__tipoCuenta').order_by('apellidos')
-        return render (request,'clientes/transferencia_cliente.html',locals())
+        return render (request,'clientes/transferencia_cliente.html')
 
 
 @login_required
@@ -202,12 +232,18 @@ def buscarTransferenciaOrigen(request):
         'saldo','tipoCuenta')
         data = ''
         for i in lista.values():
-               data =i['cedula']+";"+i['nombres']+";"+i['apellidos']+";"+i['correo']+";"
+                data =i['cedula']+";"+i['nombres']+";"+i['apellidos']+";"+i['correo']+";"
         
         for i in listaCuenta.values():
                 data += i['numero']+";"+str(i['saldo'])+";"+i['tipoCuenta']
 
         return HttpResponse(data)
+
+
+@login_required
+def obtenerUser(request):
+        user = request.user.username
+        return HttpResponse (user)
 
 
 @login_required
@@ -226,8 +262,8 @@ def transferencia(request):
         cliente2=Cliente.objects.all().filter(cedula = cedula2)
         cuenta2 = Cuenta.objects.all().filter(numero = numero2)
 
-        titulo ="Transaccion estado"
-        subtitulo ="Mensaje"
+        titulo ="Transaccion"
+        subtitulo ="transferencia"
 
         if cliente1 and cuenta1 and cliente2 and cuenta2:
                 transaccion = Transaccion()
@@ -258,10 +294,42 @@ def transferencia(request):
                 for cu in cuenta2:
                         cu.saldo =round(saldoActual2+deposito,3)
                         cu.save()
-                mensaje ='Transaccin realizada con éxito'
+                mensaje ='Transacción realizada con éxito'
                 valor = True
+                monto =request.GET['valor']
                 return render (request,'clientes/mensajes/estado.html',locals())
         else:
                 valor = False
                 mensaje ='ERROR AL REALIZAR TRANSACCION'
                 return render (request,'clientes/mensajes/estado.html',locals())
+
+
+
+
+@login_required
+def comprobante( request):
+        numero1 = request.GET['numero1']
+        cedula1= request.GET['cedula1']
+        numero2 = request.GET['numero2']
+        cedula2 = request.GET['cedula2']
+        valor = request.GET['valor']
+        tipo =request.GET['tipo']
+
+        font_config = FontConfiguration()
+        listaCliente1= Cliente.objects.all().filter(cedula = cedula1 ).values('nombres','apellidos')
+        listaCuenta1 = Cuenta.objects.all().filter(numero = numero1).values('tipoCuenta')
+
+        listaCliente2= Cliente.objects.all().filter(cedula = cedula1 ).values('nombres','apellidos')
+        listaCuenta2 = Cuenta.objects.all().filter(numero = numero1).values('tipoCuenta')
+
+        html_template = render_to_string('./../template/pdf/comprobante.html',locals())
+        response = HttpResponse(content_type='application/pdf')
+
+        pdf_file = HTML(string=html_template).write_pdf()
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+
+        response['Content-Disposition'] = 'filename="home_page.pdf"'
+
+        return response
+
+        

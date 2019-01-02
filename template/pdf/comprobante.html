@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Dashboard">
+    <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <title>Empresa para la gestion de bacos</title>
+    <link href="https://fonts.googleapis.com/css?family=Quattrocento" rel="stylesheet"> 
+</head>
+
+
+
+<body>
+    <style>
+        @page {
+            size: Letter;
+            /* Change from the default size of A4 */
+            /* (superior,derecha,inferior,izquierda) */
+            margin: 2.5cm 4cm 4cm 4cm;
+            /* Set margin on each page */
+        }
+        body{
+            font-family: 'Quattrocento', serif;
+            font-size: 15px;
+        }
+        
+        h1{
+            text-justify: auto;
+            background-color: brown;
+            text-align: center;
+            color: antiquewhite;
+            
+        }
+
+        h2{
+            text-align: center;
+        }
+       
+        
+    </style>
+
+    <div>
+        <h1>Cooperativa JACC</h1>
+        <h2>{{tipo}}</h2>
+        {%for i in listaCuenta1%}
+        <h2>Cuenta de {{i.tipoCuenta}}</h2>
+        {%endfor%}
+
+        <hr>
+        <table>
+            <tr>
+                <td>
+                    Cuenta
+                </td>
+                <td>
+                    <p style="margin-left: 100px">{{numero1}}</p>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Nombre
+                </td>
+                <td>
+                    {%for i in listaCliente1%}
+                    <p style="margin-left: 100px">{{i.nombres}} {{i.apellidos}}</p>
+                    {%endfor%}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Efectivo
+                </td>
+                <td>
+                    <p style="margin-left: 100px">{{valor}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Total
+                </td>
+                <td>
+                    <p style="margin-left: 100px"> {{valor}}</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Moneda
+                </td>
+                <td>
+                    <p style="margin-left: 100px">1 Dorales</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Oficina
+                </td>
+                <td>
+                    <p style="margin-left: 100px">0098</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Cajero
+                </td>
+                <td>
+                    <p style="margin-left: 100px">0098</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Fecha
+                </td>
+                <td>
+                    <p style="margin-left: 100px">0098</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Horario
+                </td>
+                <td>
+                    <p style="margin-left: 100px">0098</p>
+                </td>
+
+            </tr>
+
+        </table>
+    </div>
+
+
+
+
+
+</body>
+
+</html>

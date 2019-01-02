@@ -19,13 +19,13 @@ def loginPage(request):
                 else:
                     messages.warning(request, 'Usuario inactivo')
             else:
-                messages.warning(request, 'Usuario y/o contraseña')
+                messages.warning(request, 'Usuario y/o contraseña incorrectos')
             
     formulario = Formulario(request.POST)
     context = {
         'f': formulario
     }
-    return render(request,'login/login.html',context)
+    return render(request,'login/login_user.html',context)
 
 def salir(request):
     logout(request)

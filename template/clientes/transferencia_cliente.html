@@ -7,8 +7,8 @@
 <div class="row mt">
     <div id="transferir" style="display: none">
         <div class="col-lg-12 col-md-12 col-sm-12 ">
-            <button type="button" class="btn btn-success btn-lg  col-lg-12 col-md-12 col-sm-12" id="btn_Buscar_Deposito"
-                data-toggle="modal" data-target="#exampleModalCenter" onclick=transferirDinero()>Transferir
+            <button type="button"  onclick=transferirDinero() class="btn btn-success btn-lg  col-lg-12 col-md-12 col-sm-12" id="btn_Buscar_Deposito"
+                data-toggle="modal" data-target="#exampleModalCenter" >Transferir
                 Dinero</button>
 
 
@@ -20,8 +20,9 @@
 
     </div>
 
+
+    <!--Inicio parte izquierda-->
     <div class="col-lg-6 col-md-6 col-sm-12">
-        <!--  BUTTONS SIZES -->
         <div class="showback">
             <h4><i class="fa fa-angle-right"></i> Seleccione cliente origen</h4>
             <p>
@@ -90,6 +91,11 @@
         </div>
 
     </div>
+
+    <!--Fin parte izquierda-->
+
+    <!--Inicio parte Derecha-->
+
     <div class="col-lg-6 col-md-6 col-sm-12">
         <!--  BUTTONS SIZES -->
         <div class="showback">
@@ -191,8 +197,11 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-2 control-label">Confirme contraseña</label>
-                            <div class="col-sm-10">
-                                <input class="form-control" id="nombresDestino" type="password" placeholder="Igrese clave">
+                            <div class="col-sm-10" id="clave_confirmacion">
+                                <input class="form-control" id="id_password" type="password" placeholder="Igrese clave">
+                                <div id="mensaje_clave">
+                                    <!--<span class="help-block">We'll never share your email with anyone else.</span>-->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -200,7 +209,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button typ ="button" class="btn btn-primary " onclick=generarTransferencia()>Transferir</button>
+                    <button typ ="button" class="btn btn-primary " onclick=generarTransferencia() id='btn_realizarTransaccion'>Transferir</button>
                 </div>
             </div>
         </div>
@@ -209,10 +218,10 @@
 
         {% csrf_token %}
     </div>
+
     <script type="application/javascript">
 
         function buscarOrigen() {
-
             var num = $('#txt_num_origen').val()
             var div = $('#contenidoOrigen')
             var tr = $('#transferir')
@@ -221,6 +230,7 @@
                 url: "{%url 'buscarTransferenciaOrigen' %}",
                 data: "numero=" + num,
                 success: function (data) {
+                    
                     if (data) {
                         arreglo = data.split(";")
                         $('#msgOrigen').html('<div class="alert alert-success"><b>Cuenta Encontrada!</b> selecione en la parte derecha el cliente al que se transferira el dinero.</div>')
@@ -230,7 +240,6 @@
                         $('#numeroOrigen').val(arreglo[4])
                         $('#saldoOrigen').val(arreglo[5])
                         $('#tipoOrigen').val(arreglo[6])
-
                     } else {
                         $('#msgOrigen').html('<div class="alert alert-danger"><b>Cuenta no encontrada!</b> verifique el numero de cuenta</div>')
                         div.hide()
@@ -241,16 +250,11 @@
                         $('#tipoOrigen').val('')
                         tr.hide()
                     }
-
-
-
                 }
             });
-
         }
 
         function buscarDestino() {
-
             var num = $('#txt_num_Destino').val()
             var div = $('#contenidoDestino')
             var tr = $('#transferir')
@@ -261,7 +265,7 @@
                 success: function (data) {
                     if (data) {
                         arreglo = data.split(";")
-                        $('#msgDestino').html('<div class="alert alert-success"><b>Cuenta Encontrada!</b> selecione en la parte derecha el cliente al que se transferira el dinero.</div>')
+                        $('#msgDestino').html('<div class="alert alert-success"><b>Cuenta Encontrada!</b> precione el boton transferir dinero para iniciar transferencia.</div>')
                         div.show()
                         $('#cedulaDestino').val(arreglo[0])
                         $('#nombresDestino').val(arreglo[1] + " " + arreglo[2])
@@ -269,7 +273,6 @@
                         $('#saldoDestino').val(arreglo[5])
                         $('#tipoDestino').val(arreglo[6])
                         tr.show()
-
                     } else {
                         $('#msgDestino').html('<div class="alert alert-danger"><b>Cuenta no encontrada!</b> verifique el numero de cuenta</div>')
                         div.hide()
@@ -279,19 +282,16 @@
                         $('#saldoDestino').val('')
                         $('#tipoDestino').val('')
                         tr.hide()
-
                     }
-
-
-
                 }
             });
 
         }
-
-
         function transferirDinero() { 
-            var descripcion = $('#id_descripcion')
+            var descripcion = $('#id_descripcion')    
+            var numero1 = $('#numeroOrigen').val()
+            var numero2 = $('#numeroDestino').val()
+            
             descripcion.val("Numero cuenta origen: "+numero1 + "   Numero cuenta destino: "+numero2)
         }
 
@@ -308,6 +308,27 @@
             
         }
 
+    </script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script>
+         $('#id_password').change(function () {
+            $.ajax({
+                url: "{%url 'confirmarContra' %}" + '?contra=' + $('#id_password').val(),
+                success: function (user) {
+                    if (user == 'True') {
+                        $('#mensaje_clave').html('<span class="help-block">Clave ingresada con éxito.</span>')
+                        $('#btn_realizarTransaccion').removeAttr('disabled', "")
+                        $('#clave_confirmacion').removeClass('has-error')
+                        $('#clave_confirmacion').addClass('has-success')
+                    } else {
+                        $('#clave_confirmacion').removeClass('has-success')
+                        $('#clave_confirmacion').addClass('has-error')
+                        $('#btn_realizarTransaccion').attr('disabled','disabled')
+                        $('#mensaje_clave').html('<span class="help-block">Clave erronea.</span>')
+                    }
+                }
+            })
+        })
     </script>
 
     {%endblock%}

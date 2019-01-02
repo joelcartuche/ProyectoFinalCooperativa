@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load staticfiles %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Dashboard">
+    <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <title>Dashio - Bootstrap Admin Template</title>
+
+    <!-- Favicons -->
+    <link href="{% static 'principal/img/favicon.png'%}" rel="icon">
+    <link href="{% static 'principal/img/apple-touch-icon.png'%}" rel="apple-touch-icon">
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'principal/lib/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
+    <!--external css-->
+    <link href="{% static 'principal/lib/font-awesome/css/font-awesome.css'%}" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link href="{% static 'principal/css/style.css'%}" rel="stylesheet">
+    <link href="{% static 'principal/css/style-responsive.css'%}" rel="stylesheet">
+
+
+</head>
+
+<body>
+    
+    <div id="login-page">
+        <div class="container">
+            <form class="form-login" method="POST">
+                <h2 class="form-login-heading">LOG IN</h2>
+                <div class="login-wrap">
+                    {% if messages %}
+
+                    <ul class="alert alert-danger">
+                        {% for message in messages %}
+                        <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    <div id="user">
+                        {{f.username.label_tag}}{{ field }}
+                        {{f.username}}{{ field }}
+                        <div id="mensaje_name">
+                            <!--<span class="help-block">We'll never share your email with anyone else.</span>-->
+                        </div>
+                    </div>
+                    <br>
+                    <div id="clave">
+                        {{f.password.label_tag}}{{ field }}
+                        {{f.password}}{{ field }}
+                        <div id="mensaje_clave">
+                            <!--<span class="help-block">We'll never share your email with anyone else.</span>-->
+                        </div>
+                    </div>
+
+                    {% csrf_token %}
+                    <label class="checkbox"></label>
+                    <button class="btn btn-theme btn-block" type="submit" id="btn_enviar"><i class="fa fa-lock"></i>
+                        SEND</button>
+                    <hr>
+
+
+                </div>
+                <!-- Modal -->
+
+                <!-- modal -->
+            </form>
+        </div>
+    </div>
+    <!-- js placed at the end of the document so the pages load faster -->
+    <script src="{% static 'principal/lib/jquery/jquery.min.js'%}"></script>
+    <script src="{% static 'principal/lib/bootstrap/js/bootstrap.min.js'%}"></script>
+    <!--BACKSTRETCH-->
+    <!-- You can use an image of whatever size. This script will stretch to fit in any screen size.-->
+    <script type="text/javascript" src="{% static 'principal/lib/jquery.backstretch.min.js'%}"></script>
+    <script>
+        $.backstretch("{% static 'principal/img/login-bg.jpg'%}", {
+            speed: 500
+        });
+    </script>
+
+
+</body>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script>
+    /*
+    $('#btn_enviar').attr('disabled', 'disabled')
+    var confirmarUser = false
+    var confirmarClave = false
+        //confirmar contraseña
+    $('#id_password').change(function () {
+        $.ajax({
+            url: "{%url 'confirmarContra' %}" + '?contra=' + $('#id_password').val(),
+            success: function (user) {
+                if (user == 'True') {
+                    $('#mensaje_clave').html('<span class="help-block">Clave ingresada con éxito.</span>')
+                    $('#clave').removeClass('has-error')
+                    $('#clave').addClass('has-success')
+                    if(confirmarUser == true){
+                        $('#btn_enviar').removeAttr('disabled', "")
+                    }
+                    confirmarClave = true
+                    
+                } 
+                if (user == 'False') {
+                    $('#clave').removeClass('has-success')
+                    $('#clave').addClass('has-error')
+                    $('#btn_enviar').attr('disabled', 'disabled')
+                    $('#mensaje_clave').html('<span class="help-block">Clave erronea.</span>')
+                    confirmarClave = false
+                }
+            }
+        })
+    })
+    //confirmar usuario existente
+    $('#id_username').change(function () {
+        
+        $.ajax({
+            type:'get',
+            url: "{%url 'obtenerUsuario' %}"+'?user='+$('#id_username').val(),
+            success: function (user) {
+                alert(user)
+                if (user == $('#id_username').val()) {
+                    $('#mensaje_name').html('<span class="help-block">Nombre de usuario correcto.</span>')
+                    $('#user').removeClass('has-error')
+                    $('#user').addClass('has-success')
+                    if(confirmarClave == true){
+                        $('#btn_enviar').removeAttr('disabled', "")
+                    }
+                    confirmarUser = true
+                } 
+                if(user != $('#id_username').val()){
+                    $('#user').removeClass('has-success')
+                    $('#user').addClass('has-error')
+                    $('#btn_enviar').attr('disabled', 'disabled')
+                    $('#mensaje_name').html('<span class="help-block">Nombre incorrecto.</span>')
+                    confirmarUser = false
+                }
+            }
+        })
+    })
+
+*/
+</script>
+
+</html>

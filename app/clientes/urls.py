@@ -12,10 +12,11 @@ urlpatterns = [
     path('listadepositoBuscar',views.listarClienteCuentaBusqueda,name='listaDepositoBuscar'),
     path('transferencia/',views.transferenciaLista,name='transferenciaLista'),
     path('listaClienteCuenta/',views.listarClienteCuenta,name='listaClienteCuenta'),
-    path('confirmarContra',views.confirmarContrasena,name='confirmarContra'),
+    path('confirmarContra/',views.confirmarContrasena,name='confirmarContra'),
     path(r'^montoDeposito/(?P<cedula>\d+)(?P<numero>\d+)/$',views.depositar,name='montoDeposito'),
     path('transferir/',views.transferencia,name='transferencia'),
     path('buscarTransferenciaOrigen/',views.buscarTransferenciaOrigen,name='buscarTransferenciaOrigen'),
-    
+    path('obtenerUser/',views.obtenerUser,name='obtenerUsuario'),
+    path('Comprobante/',views.comprobante,name='comprobante'),
     
 ]

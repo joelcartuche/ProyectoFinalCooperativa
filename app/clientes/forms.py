@@ -21,3 +21,8 @@ class FormularioTransaccion(forms.ModelForm):
     class Meta:
         model = Transaccion
         fields=["tipo","valor","descripcion","responsable"]
+        listaTipoC = (('retiro', 'Retiro'),('deposito', 'Depósito'))
+
+        widgets = { 
+        'tipo': forms.Select(choices=listaTipoC), 
+        } 
