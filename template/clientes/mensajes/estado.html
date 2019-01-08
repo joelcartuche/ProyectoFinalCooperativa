@@ -36,10 +36,10 @@
 
                         if (numeroCuenta1 && cedulaCuenta1 && numeroCuenta2=='' &&cedulaCuenta2==''){
                             var url = '{% url "comprobante" %}'+'?numero1='+numeroCuenta1+'&&cedula1='+cedulaCuenta1+'&&numero2=""&&cedula2=""'+'&&valor='+valor+'&&tipo='+tipo
-                            window.open(url, "reporte")
+                            window.open(url, "")
                         }else{
                             var url = '{% url "comprobante" %}'+'?numero1='+numeroCuenta1+'&&cedula1='+cedulaCuenta1+'&&numero2='+numeroCuenta2+'&&cedula2='+cedulaCuenta2+'&&valor='+valor+'&&tipo='+tipo
-                            window.open(url, "reporte")
+                            window.open(url, "")
                         }
                         
 

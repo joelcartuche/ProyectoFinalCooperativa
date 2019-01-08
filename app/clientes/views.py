@@ -20,40 +20,44 @@ from weasyprint.fonts import FontConfiguration
 
 @login_required
 def crear_cliente(request):
-    formulario = FormularioCliente(request.POST)
-    formularioCuenta = FormularioCuenta(request.POST)
-    titulo = 'Creacion de datos'
-    if request.method ==  'POST':
-        if formulario.is_valid() and formularioCuenta.is_valid():
-            cliente = Cliente()
-            datos = formulario.cleaned_data
-            cliente.cedula = datos.get('cedula')
-            cliente.nombres = datos.get('nombres')
-            cliente.apellidos= datos.get('apellidos')
-            cliente.estadoCivil = datos.get('estadoCivil')
-            cliente.fechaNacimiento = datos.get('fechaNacimiento')
-            cliente.correo = datos.get('correo')
-            cliente.telefono = datos.get('telefono')
-            cliente.celular = datos.get('celular')
-            cliente.direccion= datos.get('direccion')
-            cliente.save()
+        usuario = request.user
+        if usuario.has_perm('modelo.add_cliente'):
+                formulario = FormularioCliente(request.POST)
+                formularioCuenta = FormularioCuenta(request.POST)
+                titulo = 'Creacion de datos'
+                if request.method ==  'POST':
+                        if formulario.is_valid() and formularioCuenta.is_valid():
+                                cliente = Cliente()
+                                datos = formulario.cleaned_data
+                                cliente.cedula = datos.get('cedula')
+                                cliente.nombres = datos.get('nombres')
+                                cliente.apellidos= datos.get('apellidos')
+                                cliente.estadoCivil = datos.get('estadoCivil')
+                                cliente.fechaNacimiento = datos.get('fechaNacimiento')
+                                cliente.correo = datos.get('correo')
+                                cliente.telefono = datos.get('telefono')
+                                cliente.celular = datos.get('celular')
+                                cliente.direccion= datos.get('direccion')
+                                cliente.save()
 
-            datosCuenta = formularioCuenta.cleaned_data
-            cuenta= Cuenta()
-            cuenta.numero = datosCuenta.get('numero')
-            cuenta.saldo = datosCuenta.get('saldo')
-            cuenta.tipoCuenta = datosCuenta.get('tipoCuenta')
-            cuenta.cliente = cliente
+                                datosCuenta = formularioCuenta.cleaned_data
+                                cuenta= Cuenta()
+                                cuenta.numero = datosCuenta.get('numero')
+                                cuenta.saldo = datosCuenta.get('saldo')
+                                cuenta.tipoCuenta = datosCuenta.get('tipoCuenta')
+                                cuenta.cliente = cliente
             
-            cuenta.save()
-            return redirect('principal')
-    return render(request,'clientes/crear_cliente.html',locals())
+                                cuenta.save()
+                                return redirect('principal')
+                return render(request,'clientes/crear_cliente.html',locals())
+        else:
+                return render(request,'clientes/acceso_prohibido.html')
 
 
 @login_required
 def principal(request):
         usuario = request.user
-        if usuario.has_perm('modelo.add_cliente'):
+        if usuario.has_perm('modelo.view_cliente'):
                 listaClientes = Cliente.objects.all().filter(estado=True).order_by('apellidos')
                 context = {
                         'lista':listaClientes
@@ -67,7 +71,7 @@ def principal(request):
 @login_required
 def gestion_clientes(request):
         usuario = request.user
-        if usuario.has_perm('modelo.add_cliente'):
+        if usuario.has_perm('modelo.view_cliente'):
                 listaClientes = Cliente.objects.all().order_by('apellidos')
                 context = {
                         'lista':listaClientes

@@ -120,7 +120,7 @@
         
         $.ajax({
             type:'get',
-            url: "{%url 'obtenerUsuario' %}"+'?user='+$('#id_username').val(),
+            //url: "{%url 'obtenerUser' %}"+'?user='+$('#id_username').val(),
             success: function (user) {
                 alert(user)
                 if (user == $('#id_username').val()) {

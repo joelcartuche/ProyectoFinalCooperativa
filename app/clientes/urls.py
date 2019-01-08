@@ -16,7 +16,7 @@ urlpatterns = [
     path(r'^montoDeposito/(?P<cedula>\d+)(?P<numero>\d+)/$',views.depositar,name='montoDeposito'),
     path('transferir/',views.transferencia,name='transferencia'),
     path('buscarTransferenciaOrigen/',views.buscarTransferenciaOrigen,name='buscarTransferenciaOrigen'),
-    path('obtenerUser/',views.obtenerUser,name='obtenerUsuario'),
+    path('obtenerUser/',views.obtenerUser,name='obtenerUser'),
     path('Comprobante/',views.comprobante,name='comprobante'),
     
 ]
