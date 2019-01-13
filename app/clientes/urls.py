@@ -18,5 +18,8 @@ urlpatterns = [
     path('buscarTransferenciaOrigen/',views.buscarTransferenciaOrigen,name='buscarTransferenciaOrigen'),
     path('obtenerUser/',views.obtenerUser,name='obtenerUser'),
     path('Comprobante/',views.comprobante,name='comprobante'),
+    path('CSV/',views.CSV,name='csv'),
+    path('csvGenerar/',views.generarCsv,name='generarCsv'),
+    
     
 ]

@@ -12,7 +12,6 @@ import csv
 
 from weasyprint import HTML, CSS
 from django.template.loader import get_template,render_to_string
-from django.http import HttpResponse
 from weasyprint.fonts import FontConfiguration
 
 
@@ -46,9 +45,15 @@ def crear_cliente(request):
                                 cuenta.saldo = datosCuenta.get('saldo')
                                 cuenta.tipoCuenta = datosCuenta.get('tipoCuenta')
                                 cuenta.cliente = cliente
-            
+
                                 cuenta.save()
-                                return redirect('principal')
+
+                                
+                                titulo="Crear"
+                                valor=True
+                                mensaje="cliente creado con exito"
+                                return render(request,'clientes/mensajes/success.html',locals())
+                        
                 return render(request,'clientes/crear_cliente.html',locals())
         else:
                 return render(request,'clientes/acceso_prohibido.html')
@@ -85,48 +90,63 @@ def gestion_clientes(request):
 
 @login_required
 def modificar(request,pk):
-        client = Cliente.objects.get(cedula = pk)
-        formulario = FormularioCliente(request.POST)
-        if request.method == 'POST':
+        usuario = request.user
+        if usuario.has_perm('modelo.change_cliente'):
+                client = Cliente.objects.get(cedula = pk)
                 formulario = FormularioCliente(request.POST)
-                formulario.is_valid()
-                datos = formulario.cleaned_data
-                client.nombres = datos.get('nombres')
-                client.apellidos= datos.get('apellidos')
-                client.genero = datos.get('genero')
-                client.estadoCivil =datos.get('estadoCivil')
-                client.fechaNacimiento = datos.get('fechaNacimiento')
-                client.telefono=datos.get('telefono')
-                client.celular=datos.get('celular')
-                client.direccion=datos.get('direccion')
-                client.save()
-                return redirect(principal)
+                if request.method == 'POST':
+                        formulario = FormularioCliente(request.POST)
+                        formulario.is_valid()
+                        datos = formulario.cleaned_data
+                        client.nombres = datos.get('nombres')
+                        client.apellidos= datos.get('apellidos')
+                        client.genero = datos.get('genero')
+                        client.estadoCivil =datos.get('estadoCivil')
+                        client.fechaNacimiento = datos.get('fechaNacimiento')
+                        client.telefono=datos.get('telefono')
+                        client.celular=datos.get('celular')
+                        client.direccion=datos.get('direccion')
+                        client.save()
+                        return redirect(principal)
+                else:
+                        formulario = FormularioCliente(instance = client)
+                        context = {
+                                'formulario':formulario
+                        }
+                return render(request,'clientes/editar_cliente.html',context) 
         else:
-                formulario = FormularioCliente(instance = client)
-                context = {
-                        'formulario':formulario
-                }
-        return render(request,'clientes/editar_cliente.html',context)
+                return render(request,'clientes/acceso_prohibido.html')
+        
 
 
 @login_required
 def eliminar(request,pk):
-    client = Cliente.objects.get(cedula = pk)
-    if request.method == 'POST':
-            client.estado = False
-            client.save()
-            return redirect('gestion')
-    else:
-            return render (request,'clientes/confirmar.html')
+        usuario = request.user
+        if usuario.has_perm('modelo.delete_cliente'):
+                client = Cliente.objects.get(cedula = pk)
+                if request.method == 'POST':
+                        client.estado = False
+                        client.save()
+                        return redirect('gestion')
+                else:
+                        return render (request,'clientes/confirmar.html')
+        else:
+                return render(request,'clientes/acceso_prohibido.html')
+
 
 
 @login_required
 def activar(request,pk):
-    client = Cliente.objects.get(cedula = pk)
-    if client:
-            client.estado = True
-            client.save()
-            return redirect('gestion')
+        usuario = request.user
+        if  usuario.has_perm('modelo.change_cliente'):
+                client = Cliente.objects.get(cedula = pk)
+                if client:
+                        client.estado = True
+                        client.save()
+                return redirect('gestion')
+        else:
+                return render(request,'clientes/acceso_prohibido.html')
+
 
 
 
@@ -164,58 +184,63 @@ def confirmarContrasena(request):
 
 @login_required
 def depositar(request,cedula,numero):
-        formulario = FormularioMonto(request.POST)
-        formularioTransaccion= FormularioTransaccion(request.POST)       
-        cliente=Cliente.objects.all().filter(cedula = cedula)
-        cuenta = Cuenta.objects.all().filter(numero = numero)
-        if request.method == 'POST':
-                if formulario.is_valid() and formularioTransaccion.is_valid():
-                        datos = formulario.cleaned_data
-                        datosTransaccion = formularioTransaccion.cleaned_data
-                        transaccion = Transaccion()
-                        deposito = float(datosTransaccion.get('valor'))
-                        aux=str(Cuenta.objects.get(numero = numero))
-                        aux = aux.split(';')
-                        saldoActual = float(aux[0])
-                        transaccion.tipo= datosTransaccion.get('tipo')
-                        transaccion.valor = datosTransaccion.get('valor')
-                        transaccion.descripcion = datosTransaccion.get('descripcion')
-                        transaccion.responsable = datosTransaccion.get('responsable')
-                        transaccion.cuenta = Cuenta.objects.get(cuenta_id=int(aux[1]))
-                        
-
-                        if datosTransaccion.get('tipo') =='deposito':
-                                transaccion.save()
-                                for cu in cuenta:
-                                        cu.saldo =round(saldoActual+deposito,3)
-                                        cu.save()
+        usuario = request.user
+        if usuario.has_perm('modelo.add_transaccion') :
+                formulario = FormularioMonto(request.POST)
+                formularioTransaccion= FormularioTransaccion(request.POST)       
+                cliente=Cliente.objects.all().filter(cedula = cedula)
+                cuenta = Cuenta.objects.all().filter(numero = numero)
+                if request.method == 'POST':
+                        if formulario.is_valid() and formularioTransaccion.is_valid():
+                                datos = formulario.cleaned_data
+                                datosTransaccion = formularioTransaccion.cleaned_data
+                                transaccion = Transaccion()
+                                deposito = float(datosTransaccion.get('valor'))
+                                aux=str(Cuenta.objects.get(numero = numero))
+                                aux = aux.split(';')
+                                saldoActual = float(aux[0])
+                                transaccion.tipo= datosTransaccion.get('tipo')
+                                transaccion.valor = datosTransaccion.get('valor')
+                                transaccion.descripcion = datosTransaccion.get('descripcion')
+                                transaccion.responsable = datosTransaccion.get('responsable')
+                                transaccion.cuenta = Cuenta.objects.get(cuenta_id=int(aux[1]))
+                                if datosTransaccion.get('tipo') =='deposito':
+                                        transaccion.save()
+                                        for cu in cuenta:
+                                                cu.saldo =round(saldoActual+deposito,3)
+                                                cu.save()
                                 #datos a recogerse en el template
-                                titulo='Transacción'
-                                subtitulo='Depósito'
-                                mensaje='Deposito realizado con éxito'
-                                valor=True
-                                numero1 = numero
-                                cedula1 = cedula
-                                monto = datosTransaccion.get('valor')
+                                        titulo='Transacción'
+                                        subtitulo='Depósito'
+                                        mensaje='Deposito realizado con éxito'
+                                        valor=True
+                                        numero1 = numero
+                                        cedula1 = cedula
+                                        monto = datosTransaccion.get('valor')
 
-                                return render (request,'clientes/mensajes/estado.html',locals())
-                        if datosTransaccion.get('tipo') =='retiro':
-                                transaccion.save()
-                                for cu in cuenta:
-                                        cu.saldo =round(saldoActual-deposito,3)
-                                        cu.save()
+                                        return render (request,'clientes/mensajes/estado.html',locals())
+                                if datosTransaccion.get('tipo') =='retiro':
+                                        transaccion.save()
+                                        for cu in cuenta:
+                                                cu.saldo =round(saldoActual-deposito,3)
+                                                cu.save()
                                 #datos a recogerse en el template
-                                titulo='Transacción'
-                                subtitulo='Retiro'
-                                mensaje='Retirorealizado con éxito'
-                                valor=True
-                                numero1 = numero
-                                cedula1 = cedula
-                                monto = datosTransaccion.get('valor')         
-                                return render (request,'clientes/mensajes/estado.html',locals())
+                                        titulo='Transacción'
+                                        subtitulo='Retiro'
+                                        mensaje='Retirorealizado con éxito'
+                                        valor=True
+                                        numero1 = numero
+                                        cedula1 = cedula
+                                        monto = datosTransaccion.get('valor')         
+                                        return render (request,'clientes/mensajes/estado.html',locals())
+
+                else:   
+
+                        return render (request,'clientes/transacciones/monto_deposito.html',locals())
 
         else:
-                return render (request,'clientes/transacciones/monto_deposito.html',locals())
+                return render(request,'clientes/acceso_prohibido.html')
+   
 
 
 
@@ -223,11 +248,24 @@ def depositar(request,cedula,numero):
 
 @login_required
 def transferenciaLista(request):
-        return render (request,'clientes/transferencia_cliente.html')
+        usuario = request.user
+        
+        if  usuario.has_perm('modelo.add_transaccion') :
+                user = request.user.username
+                context={
+                        'user':user
+                }
+                return render (request,'clientes/transferencia_cliente.html',context)
+        else:
+                return render(request,'clientes/acceso_prohibido.html')
+
+
+
 
 
 @login_required
 def buscarTransferenciaOrigen(request):
+
         confirmar = False
         numero = request.GET['numero']
         lista= Cliente.objects.all().filter(cuenta__numero=numero).values('cedula','nombres','apellidos','correo','cuenta__numero',
@@ -314,17 +352,11 @@ def transferencia(request):
 def comprobante( request):
         numero1 = request.GET['numero1']
         cedula1= request.GET['cedula1']
-        numero2 = request.GET['numero2']
-        cedula2 = request.GET['cedula2']
         valor = request.GET['valor']
-        tipo =request.GET['tipo']
+        user = request.user.username
 
-        font_config = FontConfiguration()
         listaCliente1= Cliente.objects.all().filter(cedula = cedula1 ).values('nombres','apellidos')
         listaCuenta1 = Cuenta.objects.all().filter(numero = numero1).values('tipoCuenta')
-
-        listaCliente2= Cliente.objects.all().filter(cedula = cedula1 ).values('nombres','apellidos')
-        listaCuenta2 = Cuenta.objects.all().filter(numero = numero1).values('tipoCuenta')
 
         html_template = render_to_string('./../template/pdf/comprobante.html',locals())
         response = HttpResponse(content_type='application/pdf')
@@ -332,8 +364,65 @@ def comprobante( request):
         pdf_file = HTML(string=html_template).write_pdf()
         response = HttpResponse(pdf_file, content_type='application/pdf')
 
-        response['Content-Disposition'] = 'filename="home_page.pdf"'
+        response['Content-Disposition'] = 'filename="comprobante.pdf"'
 
         return response
 
+@login_required
+def CSV( request):
+        cuenta= request.GET['cuentas']
+        cliente = request.GET['clientes']
+        listaCliente= Cliente.objects.all().values('cedula','nombres','apellidos','estado','correo','telefono','celular','direccion','cuenta__numero','cuenta__fechaApertura','cuenta__saldo','cuenta__tipoCuenta',
+        'cuenta__transaccion__fecha','cuenta__transaccion__tipo','cuenta__transaccion__valor','cuenta__transaccion__descripcion','cuenta__transaccion__responsable')
+        listaCuenta = Cuenta.objects.all().values('fechaApertura','saldo','tipoCuenta','transaccion__fecha','transaccion__tipo','transaccion__valor','transaccion__descripcion','transaccion__responsable')
+       
+
+
+        print("######################################33")
+        print(cuenta)
+        print(cliente)
+        print("######################################33")
+
+        if cliente=="True":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="cliente.csv"'
+
+                writer = csv.writer(response)
+
+                writer.writerow(['Cedula', 'Nombres', 'Apellidos', 'Estado','Correo','Telefono','Celular','Direccion','Cuenta'])
+                for i in listaCliente:
+                        writer.writerow([i['cedula'],i['nombres'], i['apellidos'], i['estado'], i['correo'], i['telefono'],i['celular'],i['direccion'],i['cuenta__numero']])
+                        
+                
+                
         
+        elif cuenta =="True":
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="cuentas.csv"'
+
+                listaCompleta = list
+                writer = csv.writer(response)
+                writer.writerow(['Cedula', 'Nombres', 'Apellidos', 'Numero Cuenta','Fecha Apertura','saldo','tipo Cuenta'])
+                for i in listaCliente:
+                        writer.writerow([i['cedula'],i['nombres'], i['apellidos'], i['cuenta__numero'], i['cuenta__fechaApertura'], i['cuenta__saldo'],i['cuenta__tipoCuenta']])
+        else:
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="transacciones.csv"'
+
+                listaCompleta = list
+                writer = csv.writer(response)
+                writer.writerow(['Cedula', 'Nombres', 'Apellidos', 'Numero Cuenta','Saldo','Fecha Transaccion','tipo de transaccion','valor de la transaccion','descripcion transaccion','responsable de la transccion'])
+                for i in listaCliente:
+                        writer.writerow([i['cedula'],i['nombres'], i['apellidos'], i['cuenta__numero'], i['cuenta__saldo'], i['cuenta__transaccion__fecha'],i['cuenta__transaccion__tipo'],i['cuenta__transaccion__valor'],i['cuenta__transaccion__descripcion'],i['cuenta__transaccion__responsable']])
+
+        return response
+
+
+@login_required
+def generarCsv( request):
+        usuario = request.user
+        
+        if  usuario.groups.filter(name='Gerencia').exists() :
+                return render (request,'csv/csv_clientes.html')
+        else:
+                return render(request,'clientes/acceso_prohibido.html')

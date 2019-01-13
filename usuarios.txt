@@ -1,0 +1,9 @@
+Usuario gerente:
+    nombre:Pedro
+    password:12345gerente
+Usuario cajero:
+    nombre: Juan
+    password:12345cajero
+Usuario administrador:
+    nombre:Pablo
+    password:12345admin

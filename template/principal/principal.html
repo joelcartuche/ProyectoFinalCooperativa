@@ -7,10 +7,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="">
-  <meta name="author" content="Dashboard">
+
   <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
   <title>Empresa para la gestion de bacos</title>
-  <link href="{% static 'principal/img/favicon.png'%}" rel="icon">
+  <link href="{%static 'principal/img/cooperativa.jpg'%}" rel="icon">
   <link href="{% static 'principal/img/apple-touch-icon.png'%}" rel="apple-touch-icon">
   <link href="{% static 'principal/lib/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
   <link href="{% static 'principal/lib/font-awesome/css/font-awesome.css'%}" rel="stylesheet" />
@@ -77,6 +77,13 @@
               </a>
             
           </li>
+          <li class="sub-menu">
+              <a href="{%url 'generarCsv'%}">
+                <i class="fa fa-book"></i>
+                <span>Reporte csv</span>
+                </a>
+              
+            </li>
         </ul>
     
       </div>
