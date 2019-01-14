@@ -22,4 +22,5 @@ urlpatterns = [
     path('',views.homePage,name='home'),
     path('login/',include('app.login.urls')),
     path('clientes/',include('app.clientes.urls')),
+    path('sw/',include('app.servicio_web.urls')),
 ]

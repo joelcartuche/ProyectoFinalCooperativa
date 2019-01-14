@@ -8,6 +8,19 @@
     <div class="content-panel">
       <h4><i class="fa fa-angle-right"></i> Clientes</h4>
       <hr>
+      <div class="showback">
+
+        <p>
+            <input type="text" class="form-control" id="txt_cedula_deposito" placeholder="Ingrese numero de cedula">
+
+        </p>
+        <p>
+            <button type="button" class="btn btn-theme03" id="btn_Buscar_Deposito" onclick=buscar()>Buscar</button>
+        </p>
+        
+
+    </div>
+
       <table class="table table-striped table-advance table-hover">
         <thead>
           <tr>
@@ -79,7 +92,13 @@
   </div>
 </div>
 
+<script>
+  function buscar() {
+                    var cedula = $('#txt_cedula_deposito').val()
+                    window.location.href = '{%url "buscarTransaccion"%}' + '?cedula=' + cedula
 
+                }
+</script>
 
 
 {%endblock%}

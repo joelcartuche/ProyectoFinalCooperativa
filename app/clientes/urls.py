@@ -20,6 +20,6 @@ urlpatterns = [
     path('Comprobante/',views.comprobante,name='comprobante'),
     path('CSV/',views.CSV,name='csv'),
     path('csvGenerar/',views.generarCsv,name='generarCsv'),
-    
+    path('buscarTransaccion',views.buscarTransaccionlist,name='buscarTransaccion'),
     
 ]

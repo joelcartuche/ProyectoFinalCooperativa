@@ -9,7 +9,7 @@ from django.http import FileResponse
 from reportlab.pdfgen import canvas
 
 import csv
-
+import time
 from weasyprint import HTML, CSS
 from django.template.loader import get_template,render_to_string
 from weasyprint.fonts import FontConfiguration
@@ -158,6 +158,12 @@ def buscar(request,pk,pk2):
         if pk2:
                 listaClientes2 = Cliente.objects.all().filter(cedula=pk2).order_by('apellidos')
         return render(request,'clientes/editar_cliente.html',locals())
+
+@login_required
+def buscarTransaccionlist(request):
+        cedula = request.GET['cedula']
+        lista= Cliente.objects.all().filter(cedula=cedula)
+        return render(request,'clientes/gestion_clientes.html',locals())
 
 
 
@@ -354,6 +360,7 @@ def comprobante( request):
         cedula1= request.GET['cedula1']
         valor = request.GET['valor']
         user = request.user.username
+        fecha = time.strftime('%d-%m-%y %I:%m %p ')
 
         listaCliente1= Cliente.objects.all().filter(cedula = cedula1 ).values('nombres','apellidos')
         listaCuenta1 = Cuenta.objects.all().filter(numero = numero1).values('tipoCuenta')
@@ -376,12 +383,6 @@ def CSV( request):
         'cuenta__transaccion__fecha','cuenta__transaccion__tipo','cuenta__transaccion__valor','cuenta__transaccion__descripcion','cuenta__transaccion__responsable')
         listaCuenta = Cuenta.objects.all().values('fechaApertura','saldo','tipoCuenta','transaccion__fecha','transaccion__tipo','transaccion__valor','transaccion__descripcion','transaccion__responsable')
        
-
-
-        print("######################################33")
-        print(cuenta)
-        print(cliente)
-        print("######################################33")
 
         if cliente=="True":
                 response = HttpResponse(content_type='text/csv')
